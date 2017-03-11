@@ -1,7 +1,7 @@
 {
   "name": "sub-shift",
   "version": "1.0.0",
-  "description": "Shifts SRT subtitle files by ms",
+  "description": "Shifts SRT subtitle files by ms.",
   "main": "index.js",
   "dependencies": {
     "moment": "^2.17.1"
