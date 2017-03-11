@@ -1,8 +1,11 @@
 {
-  "name": "sub-shift",
+  "name": "subshift",
   "version": "1.0.0",
   "description": "Shifts SRT subtitle files by ms.",
   "main": "index.js",
+  "bin": {
+    "subshift": "index.js"
+  },
   "dependencies": {
     "moment": "^2.17.1"
   },
@@ -12,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ngerritsen/sub-shift.git"
+    "url": "git+https://github.com/ngerritsen/subshift.git"
   },
   "keywords": [
     "subtitle",
@@ -21,7 +24,7 @@
   "author": "Niels Gerritsen",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ngerritsen/sub-shift/issues"
+    "url": "https://github.com/ngerritsen/subshift/issues"
   },
-  "homepage": "https://github.com/ngerritsen/sub-shift#readme"
+  "homepage": "https://github.com/ngerritsen/subshift#readme"
 }

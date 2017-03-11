@@ -1,11 +1,11 @@
-# sub-shift
+# subshift
 
 Shifts SRT subtitle files by ms.
 
 ## Usage
 
-Clone and run from project directory:
-
 ```bash
-node . {RELATIVE_FILE_PATH}.srt {MS_TO_SHIFT}
+npm install -g subshift
+subshift file.srt 3000 # Delays the subtitles with 3000ms
+subshift file.srt -200 # Brings the subtitles 300ms forward
 ```

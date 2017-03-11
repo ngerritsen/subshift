@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 'use strict'
 
 const fs = require('fs')
@@ -48,7 +50,7 @@ function parseTimes(timesString) {
 }
 
 function updateLast(arr, updater) {
-  arr.map((item, i) => {
+  return arr.map((item, i) => {
     if (i === arr.length - 1) {
       return updater(item)
     }
