@@ -41,7 +41,7 @@ test.beforeEach(t => {
   t.context.testFilePath = TEST_FOLDER + '/' + uuid.v4() + '.srt'
 })
 
-test.before.always(t => {
+test.before(t => {
   fs.mkdirSync(TEST_FOLDER)
 })
 
