@@ -16,6 +16,10 @@ Hello world
 00:01:20,000 --> 0:01:28,900
 Lorem ipsum,
 dolor sit amet.
+
+3
+01:59:58,888 --> 01:59:58,920
+The end!
 `
 
 test.before(t => {
@@ -37,6 +41,10 @@ Hello world
 00:01:22,100 --> 00:01:31,000
 Lorem ipsum,
 dolor sit amet.
+
+3
+02:00:00,988 --> 02:00:01,020
+The end!
 `
 
   fs.writeFileSync(testFileName, testSubtitles)
@@ -57,6 +65,10 @@ Hello world
 00:01:19,900 --> 00:01:28,800
 Lorem ipsum,
 dolor sit amet.
+
+3
+01:59:58,788 --> 01:59:58,820
+The end!
 `
 
   fs.writeFileSync(testFileName, testSubtitles)
