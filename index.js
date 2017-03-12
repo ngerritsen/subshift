@@ -13,34 +13,32 @@ const NEGATIVE_PATCH = 'NegativeNumber'
 
 program
   .version(version)
-  .description('Shifts .srt subtitle files by milliseconds, providing a shift-end will perform a linear correction.')
-  .usage('<file> <shift> [shiftEnd]')
   .option('-o --output <file>', 'Path to output shifted file.')
   .option('-b --backup', 'Create a ".bak" backup file.')
-  .parse(patchNegatives(process.argv))
 
-main()
+program
+  .description('Shifts .srt subtitle files by milliseconds, providing a shift-end will perform a linear correction.')
+  .command('shift <filepath> <shift>')
+  .action((file, shift, shiftEnd) => {
+    const shiftStart = parseNumericArg(shiftStartArg)
+    const shiftEnd = shiftEndArg ? parseNumericArg(shiftEndArg) : shiftStart
+    const subs = fs.readFileSync(filepath, 'utf-8')
+    const shiftedSubs = shift(subs, shiftStart, shiftEnd)
 
-function main() {
-  const [subPath, shiftStartArg, shiftEndArg] = program.args
-  const outputPath = program.output || subPath
+    write(program, path, outputPath, subs, shiftedSubs)
+  })
 
-  if (!subPath || !shiftStartArg) {
-    program.help()
-  }
+program
+  .command('sync <filepath> <startTime> <endTime>')
+  .description('Syncs the subtitles with a linear correction based on the start times of the first and last subtitle. Time format is HH:mm:ss,SSS.')
+  .action((filepath, startTime, endTime) => {
+    const subs = fs.readFileSync(filepath, 'utf-8')
 
-  const shiftStart = parseNumericArg(shiftStartArg)
-  const shiftEnd = shiftEndArg ? parseNumericArg(shiftEndArg) : shiftStart
+    const shiftedSubs = shift(subs, shiftStart, shiftEnd)
+    main()
+  })
 
-  const subs = fs.readFileSync(subPath, 'utf-8')
-  const shiftedSubs = shift(subs, shiftStart, shiftEnd)
-
-  if (program.backup) {
-    fs.writeFileSync(subPath + '.bak', subs)
-  }
-
-  fs.writeFileSync(outputPath, shiftedSubs)
-}
+program.parse(patchNegatives(process.argv))
 
 function shift(subs, shiftStart, shiftEnd) {
   const lines = subs.split('\n')
@@ -96,14 +94,12 @@ function read(path, callback) {
   })
 }
 
-function write(path, data, callback) {
-  fs.writeFile(path, data, err => {
-    if (err) {
-      throw err
-    }
+function write(program, path, outputPath, original, data) {
+  if (program.backup) {
+    fs.writeFileSync(path + '.bak', original)
+  }
 
-    callback()
-  })
+  fs.writeFileSync(outputPath, data)
 }
 
 function patchNegatives(args) {
