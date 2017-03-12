@@ -6,11 +6,15 @@ Shifts SRT subtitle files by ms.
 
 Make sure you have Node.js 6+ installed.
 
-`subshift filename shift [endShift]`
-
 ```bash
 npm install -g subshift
+```
 
+```bash
+subshift --help # Display help
+```
+
+```bash
 subshift file.srt 3000 # Delays the subtitles with 3000ms
 subshift file.srt -200 # Brings the subtitles 200ms forward
 subshift file.srt 1000 2000 # Does a linear shift, relative to the first and last subtitle

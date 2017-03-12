@@ -4,11 +4,22 @@
 
 const fs = require('fs')
 const moment = require('moment')
+const program = require('commander')
+const { version } = require('./package.json')
 
 const TIME_FORMAT = 'HH:mm:ss,SSS'
 const TIME_SEPARATOR = ' --> '
 
-const [,, path, shiftStartArg, shiftEndArg] = process.argv
+program
+  .version(version)
+  .usage('<file> <shift> [shiftEnd]')
+  .parse(process.argv)
+
+const [path, shiftStartArg, shiftEndArg] = program.args
+
+if (!path || !shiftStartArg) {
+  program.help()
+}
 
 const shiftStart = Number(shiftStartArg)
 const shiftEnd = shiftEndArg ? Number(shiftEndArg) : shiftStart
@@ -36,7 +47,10 @@ function shift(subs) {
 
 function shiftTimeLine(line, shiftFactor, firstTime) {
   return parseTimes(line)
-    .map(time => time.add(calculateShift(time, shiftFactor, firstTime), 'ms').format(TIME_FORMAT))
+    .map(time => {
+      const shiftBy = calculateShift(time, shiftFactor, firstTime)
+      return time.add(shiftBy, 'ms').format(TIME_FORMAT)
+    })
     .join(TIME_SEPARATOR)
 }
 
