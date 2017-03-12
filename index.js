@@ -9,23 +9,24 @@ const { version } = require('./package.json')
 
 const TIME_FORMAT = 'HH:mm:ss,SSS'
 const TIME_SEPARATOR = ' --> '
+const NEGATIVE_PATCH = 'NegativeNumber'
 
 program
   .version(version)
   .usage('<file> <shift> [shiftEnd]')
-  .parse(process.argv)
+  .parse(patchNegatives(process.argv))
 
-const [path, shiftStartArg, shiftEndArg] = program.args
+const [subPath, shiftStartArg, shiftEndArg] = program.args
 
-if (!path || !shiftStartArg) {
+if (!subPath || !shiftStartArg) {
   program.help()
 }
 
-const shiftStart = Number(shiftStartArg)
-const shiftEnd = shiftEndArg ? Number(shiftEndArg) : shiftStart
+const shiftStart = parseNumericArg(shiftStartArg)
+const shiftEnd = shiftEndArg ? parseNumericArg(shiftEndArg) : shiftStart
 
-read((subs) => {
-  write(shift(subs))
+read(subPath, (subs) => {
+  write(subPath, shift(subs))
 })
 
 function shift(subs) {
@@ -72,7 +73,7 @@ function getElapsedMs(reference, time) {
   return time.unix() - reference.unix()
 }
 
-function read(callback) {
+function read(path, callback) {
   fs.readFile(path, 'utf-8', (err, data) => {
     if (err) {
       throw err
@@ -82,10 +83,22 @@ function read(callback) {
   })
 }
 
-function write(data) {
+function write(path, data) {
   fs.writeFile(path, data, err => {
     if (err) {
       throw err
     }
   })
+}
+
+function patchNegatives(args) {
+  return args.map(arg => isNumber(arg) ? arg.replace('-', NEGATIVE_PATCH) : arg)
+}
+
+function isNumber(string) {
+  return !isNaN(string) && isFinite(string)
+}
+
+function parseNumericArg(arg) {
+  return Number(arg.replace(NEGATIVE_PATCH, '-'))
 }

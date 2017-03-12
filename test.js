@@ -92,7 +92,7 @@ The end!
 
   fs.writeFileSync(testFilePath, testSubtitles)
 
-  childProcess.execSync(`node . ${testFilePath} -100`)
+  console.log(childProcess.execSync(`node . ${testFilePath} -100`).toString())
   const result = fs.readFileSync(testFilePath, 'utf-8')
   t.is(result, expectedResult)
 })

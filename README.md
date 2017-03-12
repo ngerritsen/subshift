@@ -18,6 +18,7 @@ subshift --help # Display help
 subshift file.srt 3000 # Delays the subtitles with 3000ms
 subshift file.srt -200 # Brings the subtitles 200ms forward
 subshift file.srt 1000 2000 # Does a linear shift, relative to the first and last subtitle
+subshift file.srt 3000 -o file-sync.srt  # Specify output file
 ```
 
 > Beware that subshift overwrites the origin file, create a backup to prevent this.
