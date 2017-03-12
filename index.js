@@ -11,67 +11,31 @@ const TIME_SEPARATOR = ' --> '
 const [,, path, shiftByMsString] = process.argv
 const shiftByMs = Number(shiftByMsString)
 
-read((data) => {
-  const subs = parse(data)
-  const shiftedSubs = shift(subs)
-  const shiftedData = format(shiftedSubs)
-
-  write(shiftedData)
+read((subs) => {
+  write(shift(subs))
 })
 
 function shift(subs) {
-  return subs.map(sub => Object.assign({}, sub, {
-    times: sub.times.map(time => time.clone().add(shiftByMs, 'ms'))
-  }))
-}
-
-function parse(data) {
-  return data
+  return subs
     .split('\n')
-    .reduce((groups, line) => {
-      if (line.trim() === '') {
-        return [...groups, []]
+    .map(line => {
+      if (line.indexOf(TIME_SEPARATOR) > -1) {
+        return shiftTimeLine(line)
       }
 
-      return updateLast(groups, group => [...group, line])
-    }, [[]])
-    .filter(group => group.length > 0)
-    .map(group => {
-      const [n, timesString, ...lines] = group
-      const times = parseTimes(timesString)
-      return { n, times, lines }
+      return line
     })
+    .join('\n')
 }
 
-function parseTimes(timesString) {
-  return timesString
+function shiftTimeLine(line) {
+  return line
     .split(TIME_SEPARATOR)
-    .map(timeString => moment(timeString.trim(), TIME_FORMAT))
-}
-
-function updateLast(arr, updater) {
-  return arr.map((item, i) => {
-    if (i === arr.length - 1) {
-      return updater(item)
-    }
-
-    return item
-  })
-}
-
-function format(subs) {
-  return subs
-    .map(({ n, times, lines }) => [
-      n,
-      formatTimes(times),
-      lines.join('\n')
-    ].join('\n'))
-    .join('\n\n')
-}
-
-function formatTimes(times) {
-  return times
-    .map(time => time.format(TIME_FORMAT))
+    .map(timeString =>
+      moment(timeString.trim(), TIME_FORMAT)
+        .add(shiftByMs, 'ms')
+        .format(TIME_FORMAT)
+    )
     .join(TIME_SEPARATOR)
 }
 
