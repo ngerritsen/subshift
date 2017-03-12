@@ -1,6 +1,6 @@
 {
   "name": "subshift",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Shifts SRT subtitle files by ms.",
   "main": "index.js",
   "engines": {
@@ -10,8 +10,7 @@
     "subshift": "index.js"
   },
   "dependencies": {
-    "moment": "^2.17.1",
-    "moment-duration-format": "^1.3.0"
+    "moment": "^2.17.1"
   },
   "devDependencies": {
     "ava": "^0.18.2",
