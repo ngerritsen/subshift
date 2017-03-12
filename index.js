@@ -13,7 +13,7 @@ const NEGATIVE_PATCH = 'NegativeNumber'
 
 program
   .version(version)
-  .description('Shifts .srt subtitle files by milliseconds, providing a shift-end will do a linear shift.')
+  .description('Shifts .srt subtitle files by milliseconds, providing a shift-end will perform a linear correction.')
   .usage('<file> <shift> [shiftEnd]')
   .option('-o --output <file>', 'Path to output shifted file.')
   .option('-b --backup', 'Create a ".bak" backup file.')
