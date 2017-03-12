@@ -8,35 +8,54 @@ const moment = require('moment')
 const TIME_FORMAT = 'HH:mm:ss,SSS'
 const TIME_SEPARATOR = ' --> '
 
-const [,, path, shiftByMsString] = process.argv
-const shiftByMs = Number(shiftByMsString)
+const [,, path, shiftStartArg, shiftEndArg] = process.argv
+
+const shiftStart = Number(shiftStartArg)
+const shiftEnd = shiftEndArg ? Number(shiftEndArg) : shiftStart
 
 read((subs) => {
   write(shift(subs))
 })
 
 function shift(subs) {
-  return subs
-    .split('\n')
-    .map(line => {
-      if (line.indexOf(TIME_SEPARATOR) > -1) {
-        return shiftTimeLine(line)
-      }
+  const lines = subs.split('\n')
+  const timeLines = lines.filter(isTimeLine)
+  const [firstTime] = parseTimes(timeLines[0])
+  const [lastTime] = parseTimes(timeLines[timeLines.length - 1])
 
-      return line
-    })
+  const shiftFactor = (shiftEnd - shiftStart) / getElapsedMs(firstTime, lastTime)
+
+  return lines
+    .map(line =>
+      isTimeLine(line) ?
+        shiftTimeLine(line, shiftFactor, firstTime) :
+        line
+    )
     .join('\n')
 }
 
-function shiftTimeLine(line) {
-  return line
-    .split(TIME_SEPARATOR)
-    .map(timeString =>
-      moment(timeString.trim(), TIME_FORMAT)
-        .add(shiftByMs, 'ms')
-        .format(TIME_FORMAT)
-    )
+function shiftTimeLine(line, shiftFactor, firstTime) {
+  return parseTimes(line)
+    .map(time => time.add(calculateShift(time, shiftFactor, firstTime), 'ms').format(TIME_FORMAT))
     .join(TIME_SEPARATOR)
+}
+
+function calculateShift(time, shiftFactor, firstTime) {
+  const extraShift = getElapsedMs(firstTime, time) * shiftFactor
+  return extraShift + shiftStart
+}
+
+function parseTimes(line) {
+  return line.split(TIME_SEPARATOR)
+    .map(timeString => moment(timeString.trim(), TIME_FORMAT))
+}
+
+function isTimeLine(line) {
+  return line.indexOf(TIME_SEPARATOR) > -1
+}
+
+function getElapsedMs(reference, time) {
+  return time.unix() - reference.unix()
 }
 
 function read(callback) {

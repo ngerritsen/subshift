@@ -22,16 +22,35 @@ dolor sit amet.
 The end!
 `
 
-test.before(t => {
+const linearTestSubtitles = `
+1
+00:00:00,000 --> 00:00:00,000
+Hello world
+
+2
+01:00:00,000 --> 01:00:00,000
+Lorem ipsum,
+dolor sit amet.
+
+3
+02:00:00,000 --> 02:00:00,000
+The end!
+`
+
+test.beforeEach(t => {
+  t.context.testFilePath = TEST_FOLDER + '/' + uuid.v4() + '.srt'
+})
+
+test.before.always(t => {
   fs.mkdirSync(TEST_FOLDER)
 })
 
-test.after(t => {
+test.after.always(t => {
   rimraf.sync(TEST_FOLDER)
 })
 
 test('Shifts subtitles', t => {
-  const testFileName = TEST_FOLDER + '/' + uuid.v4() + '.srt'
+  const { testFilePath } = t.context
   const expectedResult = `
 1
 00:00:02,200 --> 00:00:05,510
@@ -47,15 +66,15 @@ dolor sit amet.
 The end!
 `
 
-  fs.writeFileSync(testFileName, testSubtitles)
+  fs.writeFileSync(testFilePath, testSubtitles)
 
-  childProcess.execSync(`node . ${testFileName} 2100`)
-  const result = fs.readFileSync(testFileName, 'utf-8')
+  childProcess.execSync(`node . ${testFilePath} 2100`)
+  const result = fs.readFileSync(testFilePath, 'utf-8')
   t.is(result, expectedResult)
 })
 
 test('Shifts subtitles negatively', t => {
-  const testFileName = TEST_FOLDER + '/' + uuid.v4() + '.srt'
+  const { testFilePath } = t.context
   const expectedResult = `
 1
 00:00:00,000 --> 00:00:03,310
@@ -71,9 +90,57 @@ dolor sit amet.
 The end!
 `
 
-  fs.writeFileSync(testFileName, testSubtitles)
+  fs.writeFileSync(testFilePath, testSubtitles)
 
-  childProcess.execSync(`node . ${testFileName} -100`)
-  const result = fs.readFileSync(testFileName, 'utf-8')
+  childProcess.execSync(`node . ${testFilePath} -100`)
+  const result = fs.readFileSync(testFilePath, 'utf-8')
+  t.is(result, expectedResult)
+})
+
+test('With a second time does a linear shift.', t => {
+  const { testFilePath } = t.context
+  const expectedResult = `
+1
+00:00:01,000 --> 00:00:01,000
+Hello world
+
+2
+01:00:02,000 --> 01:00:02,000
+Lorem ipsum,
+dolor sit amet.
+
+3
+02:00:03,000 --> 02:00:03,000
+The end!
+`
+
+  fs.writeFileSync(testFilePath, linearTestSubtitles)
+
+  childProcess.execSync(`node . ${testFilePath} 1000 3000`)
+  const result = fs.readFileSync(testFilePath, 'utf-8')
+  t.is(result, expectedResult)
+})
+
+test('With a second negative time does a linear shift.', t => {
+  const { testFilePath } = t.context
+  const expectedResult = `
+1
+00:00:01,000 --> 00:00:01,000
+Hello world
+
+2
+01:00:00,000 --> 01:00:00,000
+Lorem ipsum,
+dolor sit amet.
+
+3
+01:59:59,000 --> 01:59:59,000
+The end!
+`
+
+  fs.writeFileSync(testFilePath, linearTestSubtitles)
+
+  childProcess.execSync(`node . ${testFilePath} 1000 -1000`)
+  const result = fs.readFileSync(testFilePath, 'utf-8')
   t.is(result, expectedResult)
 })
