@@ -144,3 +144,37 @@ The end!
   const result = fs.readFileSync(testFilePath, 'utf-8')
   t.is(result, expectedResult)
 })
+
+test('Specifying an output file will write the result there.', t => {
+  const { testFilePath } = t.context
+  const expectedResult = `
+1
+00:00:02,200 --> 00:00:05,510
+Hello world
+
+2
+00:01:22,100 --> 00:01:31,000
+Lorem ipsum,
+dolor sit amet.
+
+3
+02:00:00,988 --> 02:00:01,020
+The end!
+`
+
+  fs.writeFileSync(testFilePath, testSubtitles)
+
+  childProcess.execSync(`node . ${testFilePath} 2100 -o ${testFilePath}-resync`)
+  const result = fs.readFileSync(`${testFilePath}-resync`, 'utf-8')
+  t.is(result, expectedResult)
+})
+
+test('Specifying an output file will write the result there.', t => {
+  const { testFilePath } = t.context
+
+  fs.writeFileSync(testFilePath, testSubtitles)
+
+  childProcess.execSync(`node . ${testFilePath} 2100 -b ${testFilePath}`)
+  const result = fs.readFileSync(`${testFilePath}.bak`, 'utf-8')
+  t.is(result, testSubtitles)
+})

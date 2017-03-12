@@ -1,6 +1,6 @@
 {
   "name": "subshift",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "Shifts SRT subtitle files by ms.",
   "main": "index.js",
   "engines": {

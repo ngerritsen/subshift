@@ -13,23 +13,36 @@ const NEGATIVE_PATCH = 'NegativeNumber'
 
 program
   .version(version)
+  .description('Shifts .srt subtitle files by milliseconds, providing a shift-end will do a linear shift.')
   .usage('<file> <shift> [shiftEnd]')
+  .option('-o --output <file>', 'Path to output shifted file.')
+  .option('-b --backup', 'Create a ".bak" backup file.')
   .parse(patchNegatives(process.argv))
 
-const [subPath, shiftStartArg, shiftEndArg] = program.args
+main()
 
-if (!subPath || !shiftStartArg) {
-  program.help()
+function main() {
+  const [subPath, shiftStartArg, shiftEndArg] = program.args
+  const outputPath = program.output || subPath
+
+  if (!subPath || !shiftStartArg) {
+    program.help()
+  }
+
+  const shiftStart = parseNumericArg(shiftStartArg)
+  const shiftEnd = shiftEndArg ? parseNumericArg(shiftEndArg) : shiftStart
+
+  const subs = fs.readFileSync(subPath, 'utf-8')
+  const shiftedSubs = shift(subs, shiftStart, shiftEnd)
+
+  if (program.backup) {
+    fs.writeFileSync(subPath + '.bak', subs)
+  }
+
+  fs.writeFileSync(outputPath, shiftedSubs)
 }
 
-const shiftStart = parseNumericArg(shiftStartArg)
-const shiftEnd = shiftEndArg ? parseNumericArg(shiftEndArg) : shiftStart
-
-read(subPath, (subs) => {
-  write(subPath, shift(subs))
-})
-
-function shift(subs) {
+function shift(subs, shiftStart, shiftEnd) {
   const lines = subs.split('\n')
   const timeLines = lines.filter(isTimeLine)
   const [firstTime] = parseTimes(timeLines[0])
@@ -40,22 +53,22 @@ function shift(subs) {
   return lines
     .map(line =>
       isTimeLine(line) ?
-        shiftTimeLine(line, shiftFactor, firstTime) :
+        shiftTimeLine(line, shiftFactor, shiftStart, firstTime) :
         line
     )
     .join('\n')
 }
 
-function shiftTimeLine(line, shiftFactor, firstTime) {
+function shiftTimeLine(line, shiftFactor, shiftStart, firstTime) {
   return parseTimes(line)
     .map(time => {
-      const shiftBy = calculateShift(time, shiftFactor, firstTime)
+      const shiftBy = calculateShift(time, shiftFactor, shiftStart, firstTime)
       return time.add(shiftBy, 'ms').format(TIME_FORMAT)
     })
     .join(TIME_SEPARATOR)
 }
 
-function calculateShift(time, shiftFactor, firstTime) {
+function calculateShift(time, shiftFactor, shiftStart, firstTime) {
   const extraShift = getElapsedMs(firstTime, time) * shiftFactor
   return extraShift + shiftStart
 }
@@ -83,11 +96,13 @@ function read(path, callback) {
   })
 }
 
-function write(path, data) {
+function write(path, data, callback) {
   fs.writeFile(path, data, err => {
     if (err) {
       throw err
     }
+
+    callback()
   })
 }
 
