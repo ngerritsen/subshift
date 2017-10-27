@@ -1,25 +1,27 @@
 {
   "name": "subshift",
-  "version": "1.6.1",
+  "version": "2.0.1",
   "description": "Shifts SRT subtitle files by ms.",
-  "main": "index.js",
+  "main": "src/index.js",
   "engines": {
     "node": ">=6"
   },
   "bin": {
-    "subshift": "index.js"
+    "subshift": "src/index.js"
   },
   "dependencies": {
     "commander": "^2.9.0",
     "moment": "^2.17.1"
   },
   "devDependencies": {
-    "ava": "^0.18.2",
+    "jest": "^21.2.1",
+    "prettier": "^1.7.4",
     "rimraf": "^2.6.1",
     "uuid": "^3.0.1"
   },
   "scripts": {
-    "test": "ava"
+    "pretty": "prettier --single-quote --write \"{tests,src}/*.js\"",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -34,5 +36,10 @@
   "bugs": {
     "url": "https://github.com/ngerritsen/subshift/issues"
   },
-  "homepage": "https://github.com/ngerritsen/subshift#readme"
+  "homepage": "https://github.com/ngerritsen/subshift#readme",
+  "jest": {
+    "testMatch": [
+      "<rootDir>/tests/*Test.js"
+    ]
+  }
 }
