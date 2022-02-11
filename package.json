@@ -1,6 +1,6 @@
 {
   "name": "subshift",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Shifts SRT subtitle files by ms.",
   "main": "src/index.js",
   "engines": {
@@ -20,26 +20,22 @@
     "uuid": "^3.0.1"
   },
   "scripts": {
-    "pretty": "prettier --single-quote --write \"{tests,src}/*.js\"",
-    "test": "jest"
+    "test": "jest",
+    "lint": "prettier --single-quote \"{tests,src}/*.js\"",
+    "fix": "prettier --single-quote --write \"{tests,src}/*.js\""
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ngerritsen/subshift.git"
+    "url": "git+https://gitlab.com/ngerritsen/subshift.git"
   },
-  "keywords": [
-    "subtitle",
-    "shift"
-  ],
+  "keywords": ["subtitle", "shift"],
   "author": "Niels Gerritsen",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ngerritsen/subshift/issues"
+    "url": "https://gitlab.com/ngerritsen/subshift/issues"
   },
-  "homepage": "https://github.com/ngerritsen/subshift#readme",
+  "homepage": "https://gitlab.com/ngerritsen/subshift#readme",
   "jest": {
-    "testMatch": [
-      "<rootDir>/tests/*Test.js"
-    ]
+    "testMatch": ["<rootDir>/tests/*Test.js"]
   }
 }

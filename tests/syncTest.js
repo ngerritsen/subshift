@@ -24,7 +24,9 @@ afterAll(() => {
 });
 
 test('Syncs the subtitles based on times.', () => {
-  childProcess.execSync(`node . sync ${testFilePath} 01:00:03,000 03:00:01,000`);
+  childProcess.execSync(
+    `node . sync ${testFilePath} 01:00:03,000 03:00:01,000`
+  );
 
   const result = fs.readFileSync(testFilePath, 'utf-8');
 
