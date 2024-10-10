@@ -1,5 +1,3 @@
-[![Pipeline Status](https://gitlab.com/ngerritsen/subshift/badges/master/pipeline.svg)](https://gitlab.com/ngerritsen/subshift/-/commits/master)
-
 # subshift
 
 Shifts SRT subtitle files by ms.
